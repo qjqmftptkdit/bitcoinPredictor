@@ -1,6 +1,7 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, SimpleRNN, Dropout
+from keras.layers.advanced_activations import LeakyReLU
 import matplotlib.pyplot as plt
 
 class RnnModel :
@@ -11,9 +12,14 @@ class RnnModel :
     def _createRnnModel(self) :
         model = Sequential()
 
-        model.add(SimpleRNN(units=64, input_shape=(1, self.step), activation="relu"))
-        model.add(Dense(16, activation="relu"))
+        model.add(SimpleRNN(units=64, input_shape=(1, self.step)))
+        model.add(LeakyReLU(alpha=0.2))
+        model.add(Dense(32))
         model.add(Dropout(0.5))
+        model.add(LeakyReLU(alpha=0.2))
+        model.add(Dense(32))
+        model.add(Dropout(0.5))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(Dense(1))
         model.compile(loss="mean_squared_error", optimizer="rmsprop")
 
@@ -23,7 +29,7 @@ class RnnModel :
         data = np.array(data)
         data /= max(data)
         dataX, dataY = self._createDataSet(data)
-        self.model.fit(dataX, dataY, epochs=300, batch_size=16, verbose=2)
+        self.model.fit(dataX, dataY, epochs=100000, batch_size=16, verbose=2)
 
     def testModel(self, data) :
         maxData = max(data)
