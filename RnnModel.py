@@ -25,29 +25,19 @@ class RnnModel :
 
         return model
 
-    def trainModel(self, data) :
+    def _trainModel(self, data) :
         data = np.array(data)
         data /= max(data)
         dataX, dataY = self._createDataSet(data)
-        self.model.fit(dataX, dataY, epochs=100000, batch_size=16, verbose=2)
-
-    def testModel(self, data) :
-        maxData = max(data)
-        data = np.array(data)
-        norData = data/maxData
-        dataX, _ = self._createDataSet(norData)
-
-        result = self.model.predict(dataX)
-        result *= maxData
-
-        plt.plot(data[self.step:], "-b", result, "-r")
-        plt.show()
+        self.model.fit(dataX, dataY, epochs=150, batch_size=16, verbose=2)
 
     def predictModel(self, data, nextDay) :
         savedData = data
         data = np.array(data)
 
         for i in range(nextDay) :
+            print("# Day {} Training".format(i))
+            self._trainModel(data)
             maxData = max(data)
 
             norData = data/maxData
